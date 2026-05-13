@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Panel de administración</h2>
+    <p>Aquí puedes gestionar productos y clientes.</p>
+    <!-- Ejemplo: lista de productos -->
+    <ul>
+        {% for p in productos %}
+            <li>{{ p[1] }} - ${{ p[4] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
