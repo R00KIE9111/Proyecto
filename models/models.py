@@ -1,5 +1,3 @@
-# proyecto/models/models.py
-
 class Cliente:
     def __init__(self, clienteId, nombre, correo, telefono, rol="cliente"):
         self.clienteId = clienteId

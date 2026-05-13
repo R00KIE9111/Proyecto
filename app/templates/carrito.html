@@ -7,14 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Mi carrito</h2>
-    <ul>
-        {% for item in items %}
-            <li>{{ item[0] }} - Cantidad: {{ item[1] }} - Subtotal: ${{ item[3] }}</li>
-        {% endfor %}
-    </ul>
-    <form method="POST" action="/checkout/{{ carritoId }}">
-        <button type="submit">Confirmar compra</button>
-    </form>
+    
 </body>
 </html>
