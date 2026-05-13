@@ -137,7 +137,9 @@ def crudAdmin():
 
 @app.route('/logs')
 def verLogs():
-    eventos = obtener_eventos()
+    tabla = dynamodb.Table('Evento')
+    response = tabla.scan()
+    eventos = response['Items']
     return render_template('logs.html', eventos=eventos)
 
 
