@@ -10,11 +10,11 @@
   <header>
     <h2>Tienda 404</h2>
     <nav>
-      <a href="{% url 'inicio' %}">Inicio</a>
-      <a href="{% url 'productos' %}">Productos</a>
-      <a href="{% url 'carrito' %}">Carrito</a>
-      <a href="{% url 'perfil' %}">Perfil</a>
-      <a href="{% url 'login' %}">Login</a>
+      <a href="{{ url_for('index') }}">Inicio</a>
+      <a href="{{ url_for('productos') }}">Productos</a>
+      <a href="{{ url_for('carrito') }}">Carrito</a>
+      <a href="{{ url_for('perfil') }}">Perfil</a>
+      <a href="{{ url_for('login') }}">Login</a>
     </nav>
   </header>
 
