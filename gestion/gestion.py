@@ -105,11 +105,23 @@ def agregar_al_carrito(clienteId, productoId, cantidad):
             "INSERT INTO Carrito (carritoId, clienteId, fechaCreacion, total) VALUES (%s, %s, NOW(), 0)",
             (carritoId, clienteId)
         )
-    carDetId = f"{carritoId}_{productoId}"
     cursor.execute(
-        "INSERT INTO CarritoDetalle (carDetId, carritoId, productoId, cantidad) VALUES (%s, %s, %s, %s)",
-        (carDetId, carritoId, productoId, cantidad)
+        "SELECT cantidad FROM CarritoDetalle WHERE carritoId=%s AND productoId=%s",
+        (carritoId, productoId)
     )
+    existente = cursor.fetchone()
+    if existente:
+        nueva_cantidad = existente[0] + cantidad
+        cursor.execute(
+            "UPDATE CarritoDetalle SET cantidad=%s WHERE carritoId=%s AND productoId=%s",
+            (nueva_cantidad, carritoId, productoId)
+        )
+    else:
+        carDetId = f"{carritoId}_{productoId}"
+        cursor.execute(
+            "INSERT INTO CarritoDetalle (carDetId, carritoId, productoId, cantidad) VALUES (%s, %s, %s, %s)",
+            (carDetId, carritoId, productoId, cantidad)
+        )
     cursor.execute("SELECT precio FROM Producto WHERE productoId=%s", (productoId,))
     precio = cursor.fetchone()[0]
     subtotal = cantidad * precio
