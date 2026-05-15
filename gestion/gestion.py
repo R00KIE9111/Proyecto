@@ -35,6 +35,17 @@ def crear_usuario(nombre, correo, password):
     conn.commit()
     conn.close()
 
+def obtener_usuario(userId):
+    conn = get_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute(
+        "SELECT userId, nombre, correo, rol FROM Cliente WHERE userId=%s",
+        (userId,)
+    )
+    usuario = cursor.fetchone()
+    conn.close()
+    return usuario
+
 # --- Productos ---
 def listar_productos():
     conn = get_connection()
