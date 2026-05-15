@@ -212,12 +212,22 @@ def finalizar_compra(clienteId):
 
 
 # --- Pedidos ---
-def crear_pedido(userId):
+def generar_pedido_id():
     conn = get_connection()
     cursor = conn.cursor()
-    pedidoId = str(uuid.uuid4())
-    fecha = datetime.now()
-    cursor.execute("INSERT INTO Pedido (pedidoId, userId, fecha) VALUES (%s,%s,%s)", (pedidoId, userId, fecha))
+    cursor.execute("SELECT COUNT(*) FROM Pedido")
+    count = cursor.fetchone()[0]
+    conn.close()
+    return f"PED{count+1:03d}"
+
+def crear_pedido(clienteId):
+    conn = get_connection()
+    cursor = conn.cursor()
+    pedidoId = generar_pedido_id()
+    cursor.execute(
+        "INSERT INTO Pedido (pedidoId, clienteId, fecha) VALUES (%s, %s, NOW())",
+        (pedidoId, clienteId)
+    )
     conn.commit()
     conn.close()
     return pedidoId
