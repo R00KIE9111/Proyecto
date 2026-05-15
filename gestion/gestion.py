@@ -96,10 +96,11 @@ def agregar_al_carrito(userId, productoId, cantidad):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO Carrito (userId, productoId, cantidad) VALUES (%s,%s,%s)",
+        "INSERT INTO Carrito (clienteId, productoId, cantidad) VALUES (%s, %s, %s)",
         (userId, productoId, cantidad)
     )
     conn.commit()
+    cursor.close()
     conn.close()
 
 def listar_carrito(userId):
