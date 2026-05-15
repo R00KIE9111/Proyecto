@@ -197,10 +197,11 @@ def finalizar_compra(clienteId):
     )
     productos = cursor.fetchall()
     for productoId, cantidad in productos:
+        pedDetId = f"{pedidoId}_{productoId}"
         cursor.execute(
-            "INSERT INTO PedidoDetalle (pedidoId, productoId, cantidad) VALUES (%s, %s, %s)",
-            (pedidoId, productoId, cantidad)
-        )
+        "INSERT INTO PedidoDetalle (pedDetId, pedidoId, productoId, cantidad) VALUES (%s, %s, %s, %s)",
+        (pedDetId, pedidoId, productoId, cantidad)
+    )
     cursor.execute("DELETE FROM CarritoDetalle WHERE carritoId=%s", (carritoId,))
     cursor.execute("UPDATE Carrito SET total=0 WHERE carritoId=%s", (carritoId,))
     conn.commit()
