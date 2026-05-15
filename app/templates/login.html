@@ -6,7 +6,7 @@
     <div class="card p-4 shadow">
       <h3>Iniciar Sesión</h3>
       <form method="POST">
-        {% csrf_token %}
+        {{ csrf_token() }}
         <input type="email" name="correo" placeholder="Correo" class="form-control mb-3">
         <input type="password" name="password" placeholder="Contraseña" class="form-control mb-3">
         <button type="submit" class="btn btn-primary w-100">Ingresar</button>
