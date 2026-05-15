@@ -2,7 +2,7 @@
 {% block title %}Registro de Producto{% endblock %}
 {% block content %}
     <h2>Agregar nuevo producto</h2>
-    <form method="POST" action="{{ url_for('nuevo_producto') }}" enctype="multipart/form-data" class="form-group">
+    <form method="POST" action="{{ url_for('nuevo_producto_route') }}" enctype="multipart/form-data" class="form-group">
         <label>Nombre del producto:</label>
         <input type="text" name="nombre" class="form-control" required>
         <label>Precio:</label>

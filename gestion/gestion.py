@@ -87,9 +87,11 @@ def editar_producto(productoId, datos):
 def eliminar_producto(productoId):
     conn = get_connection()
     cursor = conn.cursor()
+    cursor.execute("DELETE FROM CarritoDetalle WHERE productoId=%s", (productoId,))
     cursor.execute("DELETE FROM Producto WHERE productoId=%s", (productoId,))
     conn.commit()
     conn.close()
+
 
 # --- Carrito ---
 def agregar_al_carrito(clienteId, productoId, cantidad):
