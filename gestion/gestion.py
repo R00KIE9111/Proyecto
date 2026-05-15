@@ -188,7 +188,7 @@ def finalizar_compra(clienteId):
     carritoId, total = carrito
     pedidoId = f"PED{carritoId}"
     cursor.execute(
-        "INSERT INTO Pedido (pedidoId, clienteId, fechaPedido, total) VALUES (%s, %s, NOW(), %s)",
+        "INSERT INTO Pedido (pedidoId, clienteId, fecha, total) VALUES (%s, %s, NOW(), %s)",
         (pedidoId, clienteId, total)
     )
     cursor.execute(
