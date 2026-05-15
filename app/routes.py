@@ -80,8 +80,9 @@ def eliminar_producto_route(producto_id):
 # --- Carrito ---
 @app.route("/carrito")
 def carrito():
-    items = listar_carrito(session.get("userId"))
-    return render_template("carrito.html", items=items)
+    clienteId = session.get("userId")
+    items, total = listar_carrito(clienteId)
+    return render_template("carrito.html", items=items, total=total)
 
 @app.route("/carrito/agregar/<producto_id>", methods=["POST"])
 def agregar_carrito(producto_id):

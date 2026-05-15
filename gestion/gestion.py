@@ -118,18 +118,23 @@ def agregar_al_carrito(clienteId, productoId, cantidad):
     cursor.close()
     conn.close()
 
-def listar_carrito(userId):
+def listar_carrito(clienteId):
     conn = get_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("""
-        SELECT c.productoId, p.nombre, p.precio, c.cantidad
-        FROM Carrito c
-        JOIN Producto p ON c.productoId = p.productoId
-        WHERE c.userId=%s
-    """, (userId,))
+    query = """
+        SELECT cd.productoId, p.nombre, p.precio, cd.cantidad,
+               (p.precio * cd.cantidad) AS subtotal
+        FROM CarritoDetalle cd
+        JOIN Carrito c ON cd.carritoId = c.carritoId
+        JOIN Producto p ON cd.productoId = p.productoId
+        WHERE c.clienteId = %s
+    """
+    cursor.execute(query, (clienteId,))
     items = cursor.fetchall()
+    cursor.execute("SELECT total FROM Carrito WHERE clienteId=%s", (clienteId,))
+    total = cursor.fetchone()["total"]
     conn.close()
-    return items
+    return items, total
 
 def eliminar_del_carrito(userId, productoId):
     conn = get_connection()
