@@ -187,11 +187,12 @@ def finalizar_compra(clienteId):
         conn.close()
         return None
     carritoId, total = carrito
-    pedidoId = f"PED{carritoId}"
+    pedidoId = generar_pedido_id()
     cursor.execute(
-        "INSERT INTO Pedido (pedidoId, clienteId, fecha, total) VALUES (%s, %s, NOW(), %s)",
-        (pedidoId, clienteId, total)
+        "INSERT INTO Pedido (pedidoId, clienteId, fecha) VALUES (%s, %s, NOW())",
+        (pedidoId, clienteId)
     )
+
     cursor.execute(
         "SELECT productoId, cantidad FROM CarritoDetalle WHERE carritoId=%s",
         (carritoId,)
@@ -214,10 +215,15 @@ def finalizar_compra(clienteId):
 def generar_pedido_id():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM Pedido")
-    count = cursor.fetchone()[0]
+    cursor.execute("SELECT pedidoId FROM Pedido ORDER BY pedidoId DESC LIMIT 1")
+    row = cursor.fetchone()
     conn.close()
-    return f"PED{count+1:03d}"
+    if row and row[0].startswith("PED"):
+        ultimo_num = int(row[0][3:])
+        nuevo_num = ultimo_num + 1
+    else:
+        nuevo_num = 1
+    return f"PED{nuevo_num:03d}"
 
 def crear_pedido(clienteId):
     conn = get_connection()
