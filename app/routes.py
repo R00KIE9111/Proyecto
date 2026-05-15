@@ -125,9 +125,11 @@ def pedido(pedidoId):
     cursor.execute("SELECT * FROM Pedido WHERE pedidoId=%s", (pedidoId,))
     pedido = cursor.fetchone()
     cursor.execute(
-        "SELECT pd.productoId, p.nombre, pd.cantidad, p.precio, (pd.cantidad * p.precio) AS subtotal "
-        "FROM PedidoDetalle pd JOIN Producto p ON pd.productoId = p.productoId "
-        "WHERE pd.pedidoId=%s",
+        """SELECT pd.productoId, p.nombre, pd.cantidad, p.precio,
+                  (pd.cantidad * p.precio) AS subtotal
+           FROM PedidoDetalle pd
+           JOIN Producto p ON pd.productoId = p.productoId
+           WHERE pd.pedidoId=%s""",
         (pedidoId,)
     )
     detalles = cursor.fetchall()
