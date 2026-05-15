@@ -16,10 +16,10 @@ def get_connection():
 def validar_login(correo, password):
     conn = get_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM Cliente WHERE correo=%s", (correo,))
+    cursor.execute("SELECT * FROM Cliente WHERE email=%s", (correo,))
     user = cursor.fetchone()
     conn.close()
-    if user and check_password_hash(user["password"], password):
+    if user and check_password_hash(user["passwordHash"], password):
         return user
     return None
 
