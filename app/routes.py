@@ -83,7 +83,7 @@ def carrito():
     items = listar_carrito(session.get("userId"))
     return render_template("carrito.html", items=items)
 
-@app.route("/carrito/agregar/<int:producto_id>", methods=["POST"])
+@app.route("/carrito/agregar/<producto_id>", methods=["POST"])
 def agregar_carrito(producto_id):
     cantidad = int(request.form["cantidad"])
     agregar_al_carrito(session.get("userId"), producto_id, cantidad)
