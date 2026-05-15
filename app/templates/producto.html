@@ -1,19 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Productos{% endblock %}
+{% block title %}Registro de Producto{% endblock %}
 {% block content %}
-<h3>Productos</h3>
-<a href="{% url 'producto_crear' %}" class="btn btn-success mb-3">Nuevo Producto</a>
-<div class="row">
-  {% for producto in productos %}
-  <div class="col-md-4 mb-4">
-    <div class="product-card">
-      <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
-      <h3>{{ producto.nombre }}</h3>
-      <p>{{ producto.descripcion|truncatewords:15 }}</p>
-      <p class="price">${{ producto.precio }}</p>
-      <a href="{% url 'producto_detalle' producto.productoId %}" class="btn btn-primary">Ver detalle</a>
-    </div>
-  </div>
-  {% endfor %}
-</div>
+    <h2>Agregar nuevo producto</h2>
+    <form method="POST" action="{{ url_for('nuevo_producto') }}" enctype="multipart/form-data" class="form-group">
+        <label>Nombre del producto:</label>
+        <input type="text" name="nombre" class="form-control" required>
+        <label>Precio:</label>
+        <input type="number" name="precio" class="form-control" step="0.01" required>
+        <label>Descripción:</label>
+        <textarea name="descripcion" class="form-control" rows="3"></textarea>
+        <label>Stock:</label>
+        <input type="number" name="stock" class="form-control" min="0" required>
+        <label>Imagen:</label>
+        <input type="file" name="imagen" class="form-control">
+        <button type="submit" class="btn btn-primary mt-3">Guardar producto</button>
+    </form>
 {% endblock %}

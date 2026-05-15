@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Logs{% endblock %}
 {% block content %}
-<h3>Logs del sistema</h3>
-<table class="table table-bordered">
-  <thead><tr><th>Fecha</th><th>Acción</th><th>Usuario</th></tr></thead>
-  <tbody>
-    {% for log in logs %}
-    <tr>
-      <td>{{ log.fecha }}</td>
-      <td>{{ log.accion }}</td>
-      <td>{{ log.usuario }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <h2>Registro de Actividades</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Acción</th>
+                <th>Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.accion }}</td>
+                <td>{{ log.userId }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Detalle Producto{% endblock %}
 {% block content %}
-<div class="card p-4 shadow">
-  <h3>{{ producto.nombre }}</h3>
-  <p>{{ producto.descripcion }}</p>
-  <p>Precio: ${{ producto.precio }}</p>
-  <p>Stock: {{ producto.stock }}</p>
-  <button class="btn btn-primary">Agregar al carrito</button>
-</div>
+    <h2>{{ producto.nombre }}</h2>
+    {% if producto.imagen %}
+        <img src="{{ url_for('static', filename='img/' ~ producto.imagen) }}" class="img-fluid" alt="{{ producto.nombre }}">
+    {% endif %}
+    <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+    <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+    <form method="POST" action="{{ url_for('agregar_carrito', producto_id=producto.productoId) }}">
+        <div class="mb-3">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" name="cantidad" id="cantidad" class="form-control" value="1" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+    </form>
 {% endblock %}

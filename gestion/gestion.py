@@ -1,126 +1,148 @@
-import hashlib
-from database.db import get_connection
+import mysql.connector
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
+from datetime import datetime
 
-def generar_user_id():
-    return "USR" + str(uuid.uuid4())[:8]
+# --- Conexión a la BD ---
+def get_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="tu_password",
+        database="tu_base"
+    )
 
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+# --- Autenticación ---
+def validar_login(correo, password):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Cliente WHERE correo=%s", (correo,))
+    user = cursor.fetchone()
+    conn.close()
+    if user and check_password_hash(user["password"], password):
+        return user
+    return None
 
-def crear_usuario(nombre, correo, password, rol="cliente"):
-    userId = generar_user_id()
-    hashed_password = hash_password(password)
-
+def crear_usuario(nombre, correo, password):
     conn = get_connection()
     cursor = conn.cursor()
+    userId = str(uuid.uuid4())
+    hashed = generate_password_hash(password)
     cursor.execute(
-        "INSERT INTO Cliente (userId, nombre, correo, password, rol) VALUES (%s, %s, %s, %s, %s)",
-        (userId, nombre, correo, hashed_password, rol)
+        "INSERT INTO Cliente (userId, nombre, correo, password, rol) VALUES (%s,%s,%s,%s,%s)",
+        (userId, nombre, correo, hashed, "cliente")
     )
     conn.commit()
-    cursor.close()
     conn.close()
 
+# --- Productos ---
 def listar_productos():
     conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT productoId, nombre, precio FROM Producto")
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Producto")
     productos = cursor.fetchall()
     conn.close()
     return productos
 
-def validar_login(correo, password):
-    hashed_password = hash_password(password)
+def obtener_producto(productoId):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Cliente WHERE correo=%s AND password=%s", (correo, hashed_password))
-    user = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return user
-
-def obtener_producto(producto_id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Producto WHERE productoId=%s", (producto_id,))
+    cursor.execute("SELECT * FROM Producto WHERE productoId=%s", (productoId,))
     producto = cursor.fetchone()
-    cursor.close()
     conn.close()
     return producto
 
+def nuevo_producto(datos):
+    conn = get_connection()
+    cursor = conn.cursor()
+    productoId = str(uuid.uuid4())
+    cursor.execute(
+        "INSERT INTO Producto (productoId, nombre, descripcion, precio, stock) VALUES (%s,%s,%s,%s,%s)",
+        (productoId, datos["nombre"], datos["descripcion"], datos["precio"], datos["stock"])
+    )
+    conn.commit()
+    conn.close()
+
+def editar_producto(productoId, datos):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE Producto SET nombre=%s, descripcion=%s, precio=%s, stock=%s WHERE productoId=%s",
+        (datos["nombre"], datos["descripcion"], datos["precio"], datos["stock"], productoId)
+    )
+    conn.commit()
+    conn.close()
+
+def eliminar_producto(productoId):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Producto WHERE productoId=%s", (productoId,))
+    conn.commit()
+    conn.close()
+
+# --- Carrito ---
 def agregar_al_carrito(userId, productoId, cantidad):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO Carrito (userId, productoId, cantidad) VALUES (%s, %s, %s)",
+        "INSERT INTO Carrito (userId, productoId, cantidad) VALUES (%s,%s,%s)",
         (userId, productoId, cantidad)
     )
     conn.commit()
-    cursor.close()
-    conn.close()
-
-def crear_pedido(userId):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO Pedido (userId, estado) VALUES (%s, %s)",
-        (userId, "pendiente")
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-def obtener_producto(producto_id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Producto WHERE productoId=%s", (producto_id,))
-    producto = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return producto
-
-def agregar_al_carrito(userId, productoId, cantidad):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO Carrito (userId, productoId, cantidad) VALUES (%s, %s, %s)",
-        (userId, productoId, cantidad)
-    )
-    conn.commit()
-    cursor.close()
     conn.close()
 
 def listar_carrito(userId):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
-        SELECT c.carritoId, p.nombre, p.precio, c.cantidad
+        SELECT c.productoId, p.nombre, p.precio, c.cantidad
         FROM Carrito c
         JOIN Producto p ON c.productoId = p.productoId
         WHERE c.userId=%s
     """, (userId,))
     items = cursor.fetchall()
-    cursor.close()
     conn.close()
     return items
 
+def eliminar_del_carrito(userId, productoId):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Carrito WHERE userId=%s AND productoId=%s", (userId, productoId))
+    conn.commit()
+    conn.close()
+
+# --- Pedidos ---
 def crear_pedido(userId):
     conn = get_connection()
     cursor = conn.cursor()
-    # Crear pedido
-    cursor.execute("INSERT INTO Pedido (userId, estado) VALUES (%s, %s)", (userId, "pendiente"))
-    pedidoId = cursor.lastrowid
-    # Pasar items del carrito al detalle del pedido
-    cursor.execute("SELECT productoId, cantidad FROM Carrito WHERE userId=%s", (userId,))
-    items = cursor.fetchall()
-    for item in items:
-        cursor.execute(
-            "INSERT INTO DetallePedido (pedidoId, productoId, cantidad) VALUES (%s, %s, %s)",
-            (pedidoId, item[0], item[1])
-        )
-    cursor.execute("DELETE FROM Carrito WHERE userId=%s", (userId,))
+    pedidoId = str(uuid.uuid4())
+    fecha = datetime.now()
+    cursor.execute("INSERT INTO Pedido (pedidoId, userId, fecha) VALUES (%s,%s,%s)", (pedidoId, userId, fecha))
     conn.commit()
-    cursor.close()
     conn.close()
     return pedidoId
+
+def listar_pedidos(userId):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Pedido WHERE userId=%s", (userId,))
+    pedidos = cursor.fetchall()
+    conn.close()
+    return pedidos
+
+# --- Logs ---
+def registrar_evento(userId, accion):
+    conn = get_connection()
+    cursor = conn.cursor()
+    fecha = datetime.now()
+    cursor.execute("INSERT INTO Logs (userId, accion, timestamp) VALUES (%s,%s,%s)", (userId, accion, fecha))
+    conn.commit()
+    conn.close()
+
+def listar_logs():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Logs ORDER BY timestamp DESC")
+    logs = cursor.fetchall()
+    conn.close()
+    return logs

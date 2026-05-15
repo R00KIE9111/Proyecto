@@ -1,19 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Registro{% endblock %}
+{% block title %}Registro de Usuario{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card p-4 shadow">
-      <h3>Registro de Usuario</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="nombre" placeholder="Nombre" class="form-control mb-2">
-        <input type="email" name="correo" placeholder="Correo" class="form-control mb-2">
-        <input type="text" name="telefono" placeholder="Teléfono" class="form-control mb-2">
-        <input type="password" name="password" placeholder="Contraseña" class="form-control mb-2">
-        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
-      </form>
-    </div>
-  </div>
-</div>
+    <h2>Crear cuenta</h2>
+    <form method="POST" action="{{ url_for('crear_usuario_route') }}" class="form-group">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" class="form-control" required>
+        <label>Correo:</label>
+        <input type="email" name="correo" class="form-control" required>
+        <label>Contraseña:</label>
+        <input type="password" name="password" class="form-control" required>
+        <button type="submit" class="btn btn-success mt-3">Registrarse</button>
+    </form>
 {% endblock %}
