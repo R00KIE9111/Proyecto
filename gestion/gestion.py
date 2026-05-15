@@ -1,11 +1,11 @@
-import mysql.connector
+import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from datetime import datetime
 
 # --- Conexión a la BD ---
 def get_connection():
-    return mysql.connector.connect(
+    return pymysql.connect(
         host="localhost",
         user="root",
         password="tu_password",
@@ -15,7 +15,7 @@ def get_connection():
 # --- Autenticación ---
 def validar_login(correo, password):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM Cliente WHERE correo=%s", (correo,))
     user = cursor.fetchone()
     conn.close()
@@ -38,7 +38,7 @@ def crear_usuario(nombre, correo, password):
 # --- Productos ---
 def listar_productos():
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM Producto")
     productos = cursor.fetchall()
     conn.close()
@@ -46,7 +46,7 @@ def listar_productos():
 
 def obtener_producto(productoId):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM Producto WHERE productoId=%s", (productoId,))
     producto = cursor.fetchone()
     conn.close()
@@ -93,7 +93,7 @@ def agregar_al_carrito(userId, productoId, cantidad):
 
 def listar_carrito(userId):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("""
         SELECT c.productoId, p.nombre, p.precio, c.cantidad
         FROM Carrito c
@@ -124,7 +124,7 @@ def crear_pedido(userId):
 
 def listar_pedidos(userId):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM Pedido WHERE userId=%s", (userId,))
     pedidos = cursor.fetchall()
     conn.close()
@@ -141,7 +141,7 @@ def registrar_evento(userId, accion):
 
 def listar_logs():
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM Logs ORDER BY timestamp DESC")
     logs = cursor.fetchall()
     conn.close()

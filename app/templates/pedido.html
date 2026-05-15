@@ -1,8 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Pedido confirmado{% endblock %}
+{% block title %}Pedidos{% endblock %}
 {% block content %}
-    <h2>¡Gracias por tu compra!</h2>
-    <p>Tu pedido ha sido registrado con el número <strong>#{{ pedidoId }}</strong>.</p>
-    <a href="{{ url_for('productos') }}" class="btn btn-primary mt-3">Seguir comprando</a>
-    <a href="{{ url_for('perfil') }}" class="btn btn-secondary mt-3">Ver perfil</a>
+    <h2>Historial / Confirmación de Pedido</h2>
+    {% if pedidoId %}
+        <p>¡Gracias por tu compra!</p>
+        <p>Tu pedido ha sido confirmado con el número <strong>{{ pedidoId }}</strong>.</p>
+    {% elif pedidos %}
+        <h3>Historial de pedidos</h3>
+        <ul>
+            {% for pedido in pedidos %}
+                <li>Pedido #{{ pedido.pedidoId }} - {{ pedido.fecha }}{% if pedido.total %} - Total: ${{ pedido.total }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tienes pedidos registrados.</p>
+    {% endif %}
 {% endblock %}

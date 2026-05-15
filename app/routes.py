@@ -1,10 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from gestion.gestion import (
-    validar_login, crear_usuario, listar_productos, obtener_producto,
-    agregar_al_carrito, listar_carrito, eliminar_del_carrito,
-    crear_pedido, listar_pedidos, registrar_evento,
-    nuevo_producto, editar_producto, eliminar_producto, listar_logs
-)
+from gestion.gestion import *
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
@@ -46,7 +41,8 @@ def crear_usuario_route():
 def perfil():
     if "usuario" not in session:
         return redirect(url_for("login"))
-    return render_template("perfil.html", nombre=session["usuario"], rol=session["rol"])
+    usuario = obtener_usuario(session["userId"])
+    return render_template("perfil.html", usuario=usuario)
 
 # --- Productos ---
 @app.route("/productos")
@@ -61,6 +57,8 @@ def detalle_producto(producto_id):
 
 @app.route("/producto/nuevo", methods=["GET", "POST"])
 def nuevo_producto_route():
+    if session.get("rol") != "admin":
+        return render_template("error.html", mensaje="Acceso denegado")
     if request.method == "POST":
         nuevo_producto(request.form)
         return redirect(url_for("productos"))
@@ -110,6 +108,8 @@ def pedidos():
 # --- Logs ---
 @app.route("/logs")
 def logs():
+    if session.get("rol") != "admin":
+        return render_template("error.html", mensaje="Acceso denegado")
     lista = listar_logs()
     return render_template("logs.html", logs=lista)
 
