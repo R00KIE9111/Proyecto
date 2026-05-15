@@ -26,6 +26,29 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
+@app.route("/producto/editar/<productoId>", methods=["GET", "POST"])
+def editar_producto(productoId):
+    # Verificar que el usuario es admin
+    if session.get("rol") != "admin":
+        flash("Acceso denegado", "danger")
+        return redirect(url_for("productos"))
+
+    producto = obtener_producto(productoId)
+
+    if request.method == "POST":
+        datos = {
+            "nombre": request.form["nombre"],
+            "descripcion": request.form["descripcion"],
+            "precio": request.form["precio"],
+            "stock": request.form["stock"]
+        }
+        editar_producto(productoId, datos)
+        flash("Producto actualizado correctamente", "success")
+        return redirect(url_for("productos"))
+
+    return render_template("editar_producto.html", producto=producto)
+
+
 # --- Usuarios ---
 @app.route("/crear_usuario", methods=["GET", "POST"])
 def crear_usuario_route():
@@ -34,6 +57,7 @@ def crear_usuario_route():
         correo = request.form["correo"]
         password = request.form["password"]
         crear_usuario(nombre, correo, password)
+        flash("Usuario creado correctamente", "success")
         return redirect(url_for("login"))
     return render_template("crear_usuario.html")
 

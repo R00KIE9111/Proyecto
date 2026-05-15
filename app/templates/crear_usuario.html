@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Registro de Usuario{% endblock %}
 {% block content %}
-    <h2>Crear cuenta</h2>
-    <form method="POST" action="{{ url_for('crear_usuario_route') }}" class="form-group">
-        <label>Nombre:</label>
-        <input type="text" name="nombre" class="form-control" required>
-        <label>Correo:</label>
-        <input type="email" name="correo" class="form-control" required>
-        <label>Contraseña:</label>
-        <input type="password" name="password" class="form-control" required>
-        <button type="submit" class="btn btn-success mt-3">Registrarse</button>
-    </form>
+<h2>Crear cuenta</h2>
+<form method="POST" action="{{ url_for('crear_usuario_route') }}" class="form-group">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" class="form-control" required>
+    <label>Correo:</label>
+    <input type="email" name="correo" class="form-control" required>
+    <label>Contraseña:</label>
+    <input type="password" name="password" class="form-control" required>
+    <button type="submit" class="btn btn-success mt-3">Registrarse</button>
+</form>
 {% endblock %}
