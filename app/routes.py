@@ -65,3 +65,7 @@ def init_routes(app):
     def logs():
         registrar_evento(session["userId"], "acceso_logs", request.remote_addr)
         return render_template("logs.html")
+    
+    @app.route("/productos")
+    def productos():
+        return render_template("productos.html")
