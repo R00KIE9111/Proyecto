@@ -26,7 +26,6 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
-
 # --- Usuarios ---
 @app.route("/crear_usuario", methods=["GET", "POST"])
 def crear_usuario_route():
@@ -93,10 +92,16 @@ def editar_producto_route(producto_id):
         return redirect(url_for("productos"))
     return render_template("editar_producto.html", producto=producto)
 
-@app.route("/producto/eliminar/<int:producto_id>")
+
+@app.route("/producto/eliminar/<producto_id>")
 def eliminar_producto_route(producto_id):
+    if session.get("rol") != "admin":
+        flash("Acceso denegado", "danger")
+        return redirect(url_for("productos"))
     eliminar_producto(producto_id)
+    flash("Producto eliminado correctamente", "success")
     return redirect(url_for("productos"))
+
 
 # --- Carrito ---
 @app.route("/carrito")
