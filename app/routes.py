@@ -83,3 +83,7 @@ def init_routes(app):
     @app.route("/detalle_producto/<int:producto_id>")
     def detalle_producto(producto_id):
         return render_template("detalle_producto.html", producto_id=producto_id)
+    
+    @app.route("/perfil")
+    def perfil():
+        return render_template("perfil.html")
