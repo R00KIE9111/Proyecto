@@ -2,7 +2,6 @@ import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from datetime import datetime
-import boto3
 
 # --- Conexión a la BD ---
 def get_connection():
@@ -143,19 +142,17 @@ def listar_pedidos(userId):
     return pedidos
 
 # --- Logs ---
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-tabla = dynamodb.Table('Evento')
-
 def registrar_evento(userId, accion):
-    fecha = datetime.now().isoformat()
-    tabla.put_item(
-        Item={
-            'userId': userId,
-            'accion': accion,
-            'timestamp': fecha
-        }
+    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO Logs (userId, accion, timestamp) VALUES (%s, %s, %s)",
+        (userId, accion, fecha)
     )
-    
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 
 def listar_logs():
