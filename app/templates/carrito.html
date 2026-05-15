@@ -9,6 +9,7 @@
             <th>Precio</th>
             <th>Cantidad</th>
             <th>Subtotal</th>
+            <th>Acción</th>
         </tr>
     </thead>
     <tbody>
@@ -18,6 +19,16 @@
             <td>{{ item.precio }}</td>
             <td>{{ item.cantidad }}</td>
             <td>{{ item.subtotal }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('eliminar_carrito', productoId=item.productoId) }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('comprar') }}">
+                 <button type="submit" class="btn btn-success">Finalizar Compra</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

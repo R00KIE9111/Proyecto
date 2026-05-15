@@ -130,6 +130,46 @@ def agregar_al_carrito(clienteId, productoId, cantidad):
     cursor.close()
     conn.close()
 
+def eliminar_del_carrito(clienteId, productoId):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # 1. Obtener el carrito del cliente
+    cursor.execute("SELECT carritoId FROM Carrito WHERE clienteId=%s", (clienteId,))
+    carrito = cursor.fetchone()
+    if not carrito:
+        conn.close()
+        return
+    carritoId = carrito[0]
+
+    # 2. Obtener cantidad y precio del producto en el carrito
+    cursor.execute(
+        "SELECT cd.cantidad, p.precio FROM CarritoDetalle cd JOIN Producto p ON cd.productoId=p.productoId WHERE cd.carritoId=%s AND cd.productoId=%s",
+        (carritoId, productoId)
+    )
+    item = cursor.fetchone()
+
+    if item:
+        cantidad, precio = item
+        subtotal = cantidad * precio
+
+        # 3. Eliminar el producto del carrito
+        cursor.execute(
+            "DELETE FROM CarritoDetalle WHERE carritoId=%s AND productoId=%s",
+            (carritoId, productoId)
+        )
+
+        # 4. Actualizar el total del carrito
+        cursor.execute(
+            "UPDATE Carrito SET total = total - %s WHERE carritoId=%s",
+            (subtotal, carritoId)
+        )
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
 def listar_carrito(clienteId):
     conn = get_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -154,6 +194,38 @@ def eliminar_del_carrito(userId, productoId):
     cursor.execute("DELETE FROM Carrito WHERE userId=%s AND productoId=%s", (userId, productoId))
     conn.commit()
     conn.close()
+
+def finalizar_compra(clienteId):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT carritoId, total FROM Carrito WHERE clienteId=%s", (clienteId,))
+    carrito = cursor.fetchone()
+    if not carrito:
+        conn.close()
+        return None
+    carritoId, total = carrito
+    pedidoId = f"PED{carritoId}"
+    cursor.execute(
+        "INSERT INTO Pedido (pedidoId, clienteId, fechaPedido, total) VALUES (%s, %s, NOW(), %s)",
+        (pedidoId, clienteId, total)
+    )
+    cursor.execute(
+        "SELECT productoId, cantidad FROM CarritoDetalle WHERE carritoId=%s",
+        (carritoId,)
+    )
+    productos = cursor.fetchall()
+    for productoId, cantidad in productos:
+        cursor.execute(
+            "INSERT INTO PedidoDetalle (pedidoId, productoId, cantidad) VALUES (%s, %s, %s)",
+            (pedidoId, productoId, cantidad)
+        )
+    cursor.execute("DELETE FROM CarritoDetalle WHERE carritoId=%s", (carritoId,))
+    cursor.execute("UPDATE Carrito SET total=0 WHERE carritoId=%s", (carritoId,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return pedidoId
+
 
 # --- Pedidos ---
 def crear_pedido(userId):
@@ -186,7 +258,6 @@ def registrar_evento(userId, accion):
     conn.commit()
     cursor.close()
     conn.close()
-
 
 def listar_logs():
     conn = get_connection()

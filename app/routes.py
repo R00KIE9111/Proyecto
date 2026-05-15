@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from gestion.gestion import *
 
 app = Flask(__name__)
@@ -90,9 +90,20 @@ def agregar_carrito(producto_id):
     agregar_al_carrito(session.get("userId"), producto_id, cantidad)
     return redirect(url_for("carrito"))
 
-@app.route("/carrito/eliminar/<int:producto_id>")
-def eliminar_carrito(producto_id):
-    eliminar_del_carrito(session.get("userId"), producto_id)
+@app.route("/carrito/eliminar/<productoId>", methods=["POST"])
+def eliminar_carrito(productoId):
+    clienteId = session.get("userId")
+    eliminar_del_carrito(clienteId, productoId)
+    return redirect(url_for("carrito"))
+
+@app.route("/carrito/comprar", methods=["POST"])
+def comprar():
+    clienteId = session.get("userId")
+    pedidoId = finalizar_compra(clienteId)
+    if pedidoId:
+        flash(f"Compra realizada con éxito. Pedido: {pedidoId}", "success")
+    else:
+        flash("No se pudo finalizar la compra. Carrito vacío.", "danger")
     return redirect(url_for("carrito"))
 
 # --- Pedidos ---
