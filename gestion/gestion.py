@@ -210,7 +210,6 @@ def finalizar_compra(clienteId):
     conn.close()
     return pedidoId
 
-
 # --- Pedidos ---
 def generar_pedido_id():
     conn = get_connection()
