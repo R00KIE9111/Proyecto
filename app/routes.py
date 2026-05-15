@@ -75,7 +75,7 @@ def nuevo_producto_route():
         return redirect(url_for("productos"))
     return render_template("producto.html")
 
-@app.route("/producto/editar/<int:producto_id>", methods=["GET", "POST"])
+@app.route("/producto/editar/<producto_id>", methods=["GET", "POST"])
 def editar_producto_route(producto_id):
     if session.get("rol") != "admin":
         flash("Acceso denegado", "danger")
@@ -92,7 +92,6 @@ def editar_producto_route(producto_id):
         flash("Producto actualizado correctamente", "success")
         return redirect(url_for("productos"))
     return render_template("editar_producto.html", producto=producto)
-
 
 @app.route("/producto/eliminar/<int:producto_id>")
 def eliminar_producto_route(producto_id):
