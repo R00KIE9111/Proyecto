@@ -177,13 +177,6 @@ def listar_carrito(clienteId):
     conn.close()
     return items, total
 
-def eliminar_del_carrito(userId, productoId):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM Carrito WHERE userId=%s AND productoId=%s", (userId, productoId))
-    conn.commit()
-    conn.close()
-
 def finalizar_compra(clienteId):
     conn = get_connection()
     cursor = conn.cursor()
