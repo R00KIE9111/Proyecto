@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Detalle Producto{% endblock %}
+{% block content %}
+<div class="card p-4 shadow">
+  <h3>{{ producto.nombre }}</h3>
+  <p>{{ producto.descripcion }}</p>
+  <p>Precio: ${{ producto.precio }}</p>
+  <p>Stock: {{ producto.stock }}</p>
+  <button class="btn btn-primary">Agregar al carrito</button>
+</div>
+{% endblock %}

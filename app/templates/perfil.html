@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Perfil{% endblock %}
+{% block content %}
+<div class="card p-4 shadow">
+  <h3>Perfil de Usuario</h3>
+  <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+  <p><strong>Correo:</strong> {{ cliente.correo }}</p>
+  <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+  <p><strong>Rol:</strong> {{ cliente.rol }}</p>
+  <a href="{% url 'editar_perfil' %}" class="btn btn-warning">Editar Perfil</a>
+</div>
+{% endblock %}

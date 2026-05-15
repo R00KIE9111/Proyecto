@@ -1,12 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Carrito{% endblock %}
+{% block content %}
+<h3 class="mb-3">Carrito de Compras</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in carrito.items %}
+    <tr>
+      <td>{{ item.producto.nombre }}</td>
+      <td>{{ item.cantidad }}</td>
+      <td>${{ item.producto.precio }}</td>
+      <td>${{ item.cantidad|multiply:item.producto.precio }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="text-end">
+  <h4>Total: ${{ carrito.calcular_total }}</h4>
+  <button class="btn btn-primary">Finalizar Pedido</button>
+</div>
+{% endblock %}
