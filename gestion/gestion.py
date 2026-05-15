@@ -39,7 +39,7 @@ def obtener_usuario(userId):
     conn = get_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(
-        "SELECT userId, nombre, correo, rol FROM Cliente WHERE userId=%s",
+        "SELECT userId, nombre, email, rol FROM Cliente WHERE userId=%s",
         (userId,)
     )
     usuario = cursor.fetchone()

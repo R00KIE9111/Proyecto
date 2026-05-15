@@ -2,8 +2,9 @@
 {% block title %}Perfil{% endblock %}
 {% block content %}
     <h2>Perfil de Usuario</h2>
-    <p><strong>Nombre:</strong> {{ nombre }}</p>
-    <p><strong>Rol:</strong> {{ rol }}</p>
+    <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+    <p><strong>Email:</strong> {{ usuario.email }}</p>
+    <p><strong>Rol:</strong> {{ usuario.rol }}</p>
     <div class="mt-3">
         <a href="{{ url_for('productos') }}" class="btn btn-primary">Ver productos</a>
         <a href="{{ url_for('carrito') }}" class="btn btn-secondary">Ver carrito</a>
