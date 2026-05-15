@@ -26,7 +26,7 @@ class Carrito:
     def __init__(self, carritoId, clienteId):
         self.carritoId = carritoId
         self.clienteId = clienteId
-        self.items = []  # lista de CarritoDetalle
+        self.items = []
 
     def agregar_item(self, item):
         self.items.append(item)
