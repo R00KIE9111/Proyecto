@@ -45,7 +45,6 @@ def editar_producto(productoId):
         editar_producto(productoId, datos)
         flash("Producto actualizado correctamente", "success")
         return redirect(url_for("productos"))
-
     return render_template("editar_producto.html", producto=producto)
 
 
@@ -60,6 +59,15 @@ def crear_usuario_route():
         flash("Usuario creado correctamente", "success")
         return redirect(url_for("login"))
     return render_template("crear_usuario.html")
+
+@app.route("/crud_admin")
+def crud_admin():
+    if session.get("rol") != "admin":
+        flash("Acceso denegado", "danger")
+        return redirect(url_for("productos"))
+
+    productos = listar_productos()
+    return render_template("crud_admin.html", productos=productos)
 
 @app.route("/perfil")
 def perfil():
