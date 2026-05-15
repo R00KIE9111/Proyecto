@@ -13,24 +13,24 @@ def get_connection():
     )
 
 # --- Autenticación ---
-def validar_login(correo, password):
+def validar_login(email, password):
     conn = get_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM Cliente WHERE email=%s", (correo,))
+    cursor.execute("SELECT * FROM Cliente WHERE email=%s", (email,))
     user = cursor.fetchone()
     conn.close()
     if user and check_password_hash(user["passwordHash"], password):
         return user
     return None
 
-def crear_usuario(nombre, correo, password):
+def crear_usuario(nombre, email, password):
     conn = get_connection()
     cursor = conn.cursor()
     userId = str(uuid.uuid4())
     hashed = generate_password_hash(password)
     cursor.execute(
-        "INSERT INTO Cliente (userId, nombre, correo, password, rol) VALUES (%s,%s,%s,%s,%s)",
-        (userId, nombre, correo, hashed, "cliente")
+        "INSERT INTO Cliente (userId, nombre, email, passwordHash, rol) VALUES (%s,%s,%s,%s,%s)",
+        (userId, nombre, email, hashed, "cliente")
     )
     conn.commit()
     conn.close()
