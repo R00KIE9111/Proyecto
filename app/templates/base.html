@@ -20,6 +20,14 @@
   <main class="container mt-4">
     {% block content %}{% endblock %}
   </main>
+  <td>
+    {% if session.get('rol') == 'admin' %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('crud_admin') }}">CRUD Admin</a>
+    </li>
+{% endif %}
+
+  </td>
   <footer class="text-center py-3 bg-dark text-light mt-4">
     <p>&copy; 2026 Tienda 404</p>
   </footer>

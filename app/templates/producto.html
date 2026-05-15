@@ -15,4 +15,9 @@
         <input type="file" name="imagen" class="form-control">
         <button type="submit" class="btn btn-primary mt-3">Guardar producto</button>
     </form>
+    <td>
+        <a href="{{ url_for('editar_producto_route', productoId=producto.productoId) }}" 
+        class="btn btn-warning btn-sm">Editar</a>
+
+    </td>
 {% endblock %}
