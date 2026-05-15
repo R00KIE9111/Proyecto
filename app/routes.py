@@ -77,11 +77,9 @@ def init_routes(app):
     @app.route("/crear_usuario", methods=["GET", "POST"])
     def crear_usuario():
         if request.method == "POST":
-            # lógica para insertar usuario en RDS
             return redirect(url_for("login"))
         return render_template("crear_usuario.html")
 
     @app.route("/detalle_producto/<int:producto_id>")
     def detalle_producto(producto_id):
-        # Aquí podrías cargar detalle desde RDS
         return render_template("detalle_producto.html", producto_id=producto_id)
