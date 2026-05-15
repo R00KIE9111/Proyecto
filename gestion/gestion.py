@@ -92,16 +92,28 @@ def eliminar_producto(productoId):
     conn.close()
 
 # --- Carrito ---
-def agregar_al_carrito(userId, productoId, cantidad):
+def agregar_al_carrito(clienteId, productoId, cantidad):
     conn = get_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT carritoId FROM Carrito WHERE clienteId=%s", (clienteId,))
+    carrito = cursor.fetchone()
+
+    if carrito:
+        carritoId = carrito[0]
+    else:
+        carritoId = f"CARR{clienteId}"
+        cursor.execute(
+            "INSERT INTO Carrito (carritoId, clienteId, fechaCreacion, total) VALUES (%s, %s, NOW(), 0)",
+            (carritoId, clienteId)
+        )
     cursor.execute(
-        "INSERT INTO Carrito (clienteId, productoId, cantidad) VALUES (%s, %s, %s)",
-        (userId, productoId, cantidad)
+        "INSERT INTO CarritoDetalle (carritoId, productoId, cantidad, subtotal) VALUES (%s, %s, %s, %s)",
+        (carritoId, productoId, cantidad, 0)
     )
     conn.commit()
     cursor.close()
     conn.close()
+
 
 def listar_carrito(userId):
     conn = get_connection()
