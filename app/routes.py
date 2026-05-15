@@ -101,10 +101,11 @@ def comprar():
     clienteId = session.get("userId")
     pedidoId = finalizar_compra(clienteId)
     if pedidoId:
-        flash(f"Compra realizada con éxito. Pedido: {pedidoId}", "success")
+        flash("Compra realizada con éxito", "success")
+        return redirect(url_for("pedido", pedidoId=pedidoId))
     else:
         flash("No se pudo finalizar la compra. Carrito vacío.", "danger")
-    return redirect(url_for("carrito"))
+        return redirect(url_for("carrito"))
 
 # --- Pedidos ---
 @app.route("/pedido/crear")
@@ -116,6 +117,22 @@ def pedido_crear():
 def pedidos():
     lista = listar_pedidos(session.get("userId"))
     return render_template("pedido.html", pedidos=lista)
+
+@app.route("/pedido/<pedidoId>")
+def pedido(pedidoId):
+    conn = get_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM Pedido WHERE pedidoId=%s", (pedidoId,))
+    pedido = cursor.fetchone()
+    cursor.execute(
+        "SELECT pd.productoId, p.nombre, pd.cantidad, p.precio, (pd.cantidad * p.precio) AS subtotal "
+        "FROM PedidoDetalle pd JOIN Producto p ON pd.productoId = p.productoId "
+        "WHERE pd.pedidoId=%s",
+        (pedidoId,)
+    )
+    detalles = cursor.fetchall()
+    conn.close()
+    return render_template("pedido.html", pedido=pedido, detalles=detalles)
 
 # --- Logs ---
 @app.route("/logs")

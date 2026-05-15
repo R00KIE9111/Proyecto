@@ -24,14 +24,12 @@
                     <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                 </form>
             </td>
-            <td>
-                <form method="POST" action="{{ url_for('comprar') }}">
-                 <button type="submit" class="btn btn-success">Finalizar Compra</button>
-                </form>
-            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <p><strong>Total:</strong> {{ total }}</p>
+<form method="POST" action="{{ url_for('comprar') }}">
+    <button type="submit" class="btn btn-success">Finalizar Compra</button>
+</form>
 {% endblock %}
