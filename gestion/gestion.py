@@ -97,7 +97,6 @@ def agregar_al_carrito(clienteId, productoId, cantidad):
     cursor = conn.cursor()
     cursor.execute("SELECT carritoId FROM Carrito WHERE clienteId=%s", (clienteId,))
     carrito = cursor.fetchone()
-
     if carrito:
         carritoId = carrito[0]
     else:
@@ -106,14 +105,18 @@ def agregar_al_carrito(clienteId, productoId, cantidad):
             "INSERT INTO Carrito (carritoId, clienteId, fechaCreacion, total) VALUES (%s, %s, NOW(), 0)",
             (carritoId, clienteId)
         )
+    carDetId = f"{carritoId}_{productoId}"
     cursor.execute(
-        "INSERT INTO CarritoDetalle (carritoId, productoId, cantidad, subtotal) VALUES (%s, %s, %s, %s)",
-        (carritoId, productoId, cantidad, 0)
+        "INSERT INTO CarritoDetalle (carDetId, carritoId, productoId, cantidad) VALUES (%s, %s, %s, %s)",
+        (carDetId, carritoId, productoId, cantidad)
     )
+    cursor.execute("SELECT precio FROM Producto WHERE productoId=%s", (productoId,))
+    precio = cursor.fetchone()[0]
+    subtotal = cantidad * precio
+    cursor.execute("UPDATE Carrito SET total = total + %s WHERE carritoId=%s", (subtotal, carritoId))
     conn.commit()
     cursor.close()
     conn.close()
-
 
 def listar_carrito(userId):
     conn = get_connection()
