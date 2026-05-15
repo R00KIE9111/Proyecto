@@ -215,14 +215,17 @@ def finalizar_compra(clienteId):
 def generar_pedido_id():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT pedidoId FROM Pedido ORDER BY pedidoId DESC LIMIT 1")
-    row = cursor.fetchone()
+    cursor.execute("SELECT pedidoId FROM Pedido ORDER BY fecha DESC")
+    rows = cursor.fetchall()
     conn.close()
-    if row and row[0].startswith("PED"):
-        ultimo_num = int(row[0][3:])
-        nuevo_num = ultimo_num + 1
-    else:
-        nuevo_num = 1
+    ultimo_num = 0
+    for row in rows:
+        pid = row[0]
+        if pid.startswith("PED") and pid[3:].isdigit():
+            num = int(pid[3:])
+            if num > ultimo_num:
+                ultimo_num = num
+    nuevo_num = ultimo_num + 1
     return f"PED{nuevo_num:03d}"
 
 def crear_pedido(clienteId):
