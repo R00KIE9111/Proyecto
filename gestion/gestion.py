@@ -133,42 +133,31 @@ def agregar_al_carrito(clienteId, productoId, cantidad):
 def eliminar_del_carrito(clienteId, productoId):
     conn = get_connection()
     cursor = conn.cursor()
-
-    # 1. Obtener el carrito del cliente
     cursor.execute("SELECT carritoId FROM Carrito WHERE clienteId=%s", (clienteId,))
     carrito = cursor.fetchone()
     if not carrito:
         conn.close()
         return
     carritoId = carrito[0]
-
-    # 2. Obtener cantidad y precio del producto en el carrito
     cursor.execute(
         "SELECT cd.cantidad, p.precio FROM CarritoDetalle cd JOIN Producto p ON cd.productoId=p.productoId WHERE cd.carritoId=%s AND cd.productoId=%s",
         (carritoId, productoId)
     )
     item = cursor.fetchone()
-
     if item:
         cantidad, precio = item
         subtotal = cantidad * precio
-
-        # 3. Eliminar el producto del carrito
         cursor.execute(
             "DELETE FROM CarritoDetalle WHERE carritoId=%s AND productoId=%s",
             (carritoId, productoId)
         )
-
-        # 4. Actualizar el total del carrito
         cursor.execute(
             "UPDATE Carrito SET total = total - %s WHERE carritoId=%s",
             (subtotal, carritoId)
         )
-
     conn.commit()
     cursor.close()
     conn.close()
-
 
 def listar_carrito(clienteId):
     conn = get_connection()
