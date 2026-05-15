@@ -12,7 +12,7 @@ def get_connection():
     )
 
 # Conexión DynamoDB
-dynamodb = boto3.resource("dynamodb")
+dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
 tabla_evento = dynamodb.Table("Evento")
 
 def registrar_evento(userId, accion, ip):
