@@ -50,7 +50,7 @@ def productos():
     lista = listar_productos()
     return render_template("index.html", productos=lista)
 
-@app.route("/detalle_producto/<int:producto_id>")
+@app.route("/detalle_producto/<producto_id>")
 def detalle_producto(producto_id):
     producto = obtener_producto(producto_id)
     return render_template("detalle_producto.html", producto=producto)
