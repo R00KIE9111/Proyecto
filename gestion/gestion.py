@@ -92,7 +92,6 @@ def eliminar_producto(productoId):
     conn.commit()
     conn.close()
 
-
 # --- Carrito ---
 def agregar_al_carrito(clienteId, productoId, cantidad):
     conn = get_connection()
