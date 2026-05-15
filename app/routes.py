@@ -92,7 +92,7 @@ def agregar_carrito(producto_id):
 
 @app.route("/carrito/eliminar/<productoId>", methods=["POST"])
 def eliminar_carrito(productoId):
-    clienteId = session.get("userId")  # tu sesión guarda userId
+    clienteId = session.get("userId")
     eliminar_del_carrito(clienteId, productoId)
     return redirect(url_for("carrito"))
 
